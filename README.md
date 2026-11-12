@@ -4,7 +4,7 @@
 
 ShopEase is a Django-based e-commerce application that allows users to browse products, search by name, filter by category, add products to a shopping cart, and place orders.
 
-It also provides an API for managing products and categories.
+It also provides a REST API for managing products and categories.
 
 ## Features
 
@@ -41,30 +41,31 @@ Example commands:
 
 ```bash
 python -m venv venv
-python manage.py migrate
-python manage.py runserver
-```
-
-Install the required packages using:
-
-```bash
 pip install django djangorestframework pillow
+python manage.py migrate
+python manage.py runserver 8001
 ```
 
 ## Local URLs
 
-- Homepage: `http://127.0.0.1:8001/`
-- Admin dashboard: `http://127.0.0.1:8001/admin/`
-- Product API: `http://127.0.0.1:8001/api/products/`
-- Category API: `http://127.0.0.1:8001/api/categories/`
+- Homepage: http://127.0.0.1:8001/
+- Admin dashboard: http://127.0.0.1:8001/admin/
+- Product API: http://127.0.0.1:8001/api/products/
+- Category API: http://127.0.0.1:8001/api/categories/
 
 ## API Documentation
 
-See [api_docs.md](api_docs.md) for the API endpoints, permissions, and expected response codes.
+See [api_docs.md](api_docs.md) for API endpoints, permissions, and expected response codes.
 
 ## API Testing
 
-The API endpoints have been tested using Postman. The collection covers listing, retrieving, creating, updating, and deleting products and categories.
+The API endpoints have been tested using Postman.
+
+The Postman collection is available at:
+
+`postman/ShopEase_API_Tests_Sanitized.postman_collection.json`
+
+It covers listing, retrieving, creating, updating, and deleting products and categories.
 
 ## Security
 
@@ -78,8 +79,8 @@ Checkout creates orders and updates product stock. It does not currently process
 
 ## Deployment
 
-Live URL: To be added after deployment.
+Live HTTPS URL: To be added after deployment.
 
 ## Repository
 
-GitHub URL: To be added after the repository is published.
+GitHub: https://github.com/sammypee0214-cpu/Final-project-ShopEase
