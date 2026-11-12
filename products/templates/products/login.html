@@ -1,0 +1,47 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEase | Login</title>
+    <link rel="stylesheet" href="{% static 'products/style.css' %}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">ShopEase</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/cart/">My Cart</a>
+            <a href="/register/">Register</a>
+        </div>
+    </nav>
+
+    <section class="categories">
+        <h2>Login to ShopEase</h2>
+
+        {% if error %}
+            <p class="error-message">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST" class="login-form">
+            {% csrf_token %}
+
+            <label>Username</label>
+            <input type="text" name="username" required>
+
+            <label>Password</label>
+            <input type="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p>Don't have an account?
+            <a href="{% url 'register' %}">Register here</a>
+        </p>
+    </section>
+
+</body>
+</html>
