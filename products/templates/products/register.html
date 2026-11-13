@@ -1,57 +1,42 @@
+{% extends 'base.html' %}
 
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEase | Register</title>
-    <link rel="stylesheet" href="{% static 'products/style.css' %}">
-</head>
-<body>
+{% block title %}ShopEase | Register{% endblock %}
 
-    <nav class="navbar">
-        <div class="logo">ShopEase</div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/cart/">My Cart</a>
-        </div>
-    </nav>
+{% block content %}
+<section class="categories">
+    <h2>Create Your ShopEase Account</h2>
 
-    <section class="categories">
-        <h2>Create Your ShopEase Account</h2>
+    {% if error %}
+        <p class="error-message">{{ error }}</p>
+    {% endif %}
 
-        {% if error %}
-            <p class="error-message">{{ error }}</p>
-        {% endif %}
+    {% if success %}
+        <p class="success-message">
+            Account created successfully, {{ username }}!
+        </p>
+        <a href="{% url 'home' %}" class="continue-shopping">
+            Continue Shopping
+        </a>
+    {% else %}
+        <form method="POST" class="register-form">
+            {% csrf_token %}
 
-        {% if success %}
-            <p class="success-message">
-                Account created successfully, {{ username }}!
-            </p>
-            <a href="/" class="continue-shopping">Continue Shopping</a>
-        {% else %}
-            <form method="POST" class="register-form">
-                {% csrf_token %}
+            <label>Username</label>
+            <input type="text" name="username" required>
 
-                <label>Username</label>
-                <input type="text" name="username" required>
+            <label>Email Address</label>
+            <input type="email" name="email" required>
 
-                <label>Email Address</label>
-                <input type="email" name="email" required>
+            <label>Password</label>
+            <input type="password" name="password" required>
 
-                <label>Password</label>
-                <input type="password" name="password" required>
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_password" required>
 
-                <label>Confirm Password</label>
-                <input type="password" name="confirm_password" required>
-
-                <button type="submit" class="update-cart">
-                    Create Account
-                </button>
-            </form>
-        {% endif %}
-    </section>
-
-</body>
-</html>
+            <button type="submit" class="update-cart">
+                Create Account
+            </button>
+        </form>
+    {% endif %}
+</section>
+{% endblock %}

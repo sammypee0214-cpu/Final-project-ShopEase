@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Category, Product, Order, OrderItem
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
+from .forms import ProductForm, CategoryForm
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import ProductSerializer, CategorySerializer
@@ -175,76 +176,14 @@ def product_detail(request, product_id):
 
 
 
-def register(request):
-    if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '')
-        confirm_password = request.POST.get('confirm_password', '')
 
-        if not all([username, email, password, confirm_password]):
-            return render(request, 'products/register.html', {
-                'error': 'Please complete all fields.'
-            })
-
-        if password != confirm_password:
-            return render(request, 'products/register.html', {
-                'error': 'Passwords do not match.'
-            })
-
-        if User.objects.filter(username=username).exists():
-            return render(request, 'products/register.html', {
-                'error': 'This username is already taken.'
-            })
-
-        if User.objects.filter(email=email).exists():
-            return render(request, 'products/register.html', {
-                'error': 'This email is already registered.'
-            })
-
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
-
-        return render(request, 'products/register.html', {
-            'success': True,
-            'username': user.username
-        })
-
-    return render(request, 'products/register.html')
-
-def user_login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '')
-
-        user = authenticate(
-            request,
-            username=username,
-            password=password
-        )
-
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-
-        return render(request, 'products/login.html', {
-            'error': 'Invalid username or password.'
-        })
-
-    return render(request, 'products/login.html')
-
-def user_logout(request):
-    logout(request)
-    return redirect('home')
 
 @api_view(['GET'])
 def product_list_api(request):
     products = Product.objects.filter(available=True)
     serializer = ProductSerializer(products, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def product_detail_api(request, product_id):
@@ -253,13 +192,13 @@ def product_detail_api(request, product_id):
         id=product_id,
         available=True
     )
-
     serializer = ProductSerializer(product)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 def category_list_api(request):
-    categories =  Category.objects.all()
+    categories = Category.objects.all()
     serializer = CategorySerializer(categories, many=True)
     return Response(serializer.data)
 
@@ -267,9 +206,9 @@ def category_list_api(request):
 @api_view(['GET'])
 def category_detail_api(request, category_id):
     category = get_object_or_404(Category, id=category_id)
-
     serializer = CategorySerializer(category)
     return Response(serializer.data)
+
 
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
@@ -348,3 +287,60 @@ def delete_category_api(request, category_id):
         {"message": "Category deleted successfully."},
         status=200
     )
+
+
+@login_required
+@user_passes_test(lambda user: user.is_staff)
+def create_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Product created successfully.')
+            return redirect('home')
+    else:
+        form = ProductForm()
+
+    return render(request, 'products/product_form.html', {
+        'form': form,
+        'title': 'Create Product'
+    })
+
+@login_required
+@user_passes_test(lambda user: user.is_staff)
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == 'POST':
+        form = ProductForm(
+            request.POST,
+            request.FILES,
+            instance=product
+        )
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Product updated successfully.')
+            return redirect('product_detail', product_id=product.id)
+    else:
+        form = ProductForm(instance=product)
+
+    return render(request, 'products/product_form.html', {
+        'form': form,
+        'title': 'Edit Product'
+    })
+
+@login_required
+@user_passes_test(lambda user: user.is_staff)
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == 'POST':
+        product.delete()
+        messages.success(request, 'Product deleted successfully.')
+        return redirect('home')
+
+    return render(request, 'products/product_confirm_delete.html', {
+        'product': product
+    })

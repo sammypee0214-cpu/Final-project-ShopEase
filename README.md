@@ -1,3 +1,7 @@
+## Live Application
+
+https://final-project-shopease.onrender.com
+
 # ShopEase - E-Commerce Web Application
 
 ## Project Overview
@@ -84,3 +88,4 @@ Live HTTPS URL: To be added after deployment.
 ## Repository
 
 GitHub: https://github.com/sammypee0214-cpu/Final-project-ShopEase
+

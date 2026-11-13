@@ -3,9 +3,11 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from products import views
+from django.urls import include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('accounts.urls')),
     path('', views.home, name='home'),
     path('api/products/', views.product_list_api, name='product_list_api'),
     path(
@@ -42,17 +44,7 @@ path(
     views.product_detail,
     name='product_detail'
 ),
-path(
-    'register/',
-    views.register,
-    name='register'
-),
-path(
-    'login/',
-    views.user_login,
-    name='login'
-),
-path('logout/', views.user_logout, name='logout'),
+
 path(
     'api/products/<int:product_id>/update/',
     views.update_product_api,
@@ -63,6 +55,7 @@ path(
     views.delete_product_api,
     name='delete_product_api'
 ),
+
 path(
     'api/categories/create/',
     views.create_category_api,
@@ -78,6 +71,21 @@ path(
     views.delete_category_api,
     name='delete_category_api'
 ),
+    path(
+        'products/create/',
+        views.create_product,
+        name='create_product'
+    ),
+    path(
+        'products/<int:product_id>/edit/',
+        views.edit_product,
+        name='edit_product'
+    ),
+    path(
+        'products/<int:product_id>/delete/',
+        views.delete_product,
+        name='delete_product'
+    ),
 ]
 
 if settings.DEBUG:
